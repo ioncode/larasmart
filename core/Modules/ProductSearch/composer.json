@@ -1,0 +1,27 @@
+{
+    "name": "nwidart/productsearch",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        },
+        {
+            "name": "Andrey Ponteleev",
+            "email": "ionrussia@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\ProductSearch\\": ""
+        }
+    }
+}
