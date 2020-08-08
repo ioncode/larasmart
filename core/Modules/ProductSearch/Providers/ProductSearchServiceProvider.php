@@ -2,8 +2,10 @@
 
 namespace Modules\ProductSearch\Providers;
 
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
+use Modules\ProductSearch\Entities\OpenFoodFactsSmart;
 
 class ProductSearchServiceProvider extends ServiceProvider
 {
@@ -39,6 +41,10 @@ class ProductSearchServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
+        // register extended proxy class OpenFoodFactsSmart in module
+        $this->app->singleton('openfoodfactssmart', function (Container $app) {
+            return new OpenFoodFactsSmart($app);
+        });
     }
 
     /**

@@ -5,8 +5,10 @@ namespace Modules\ProductSearch\Http\Controllers;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+//use Modules\ProductSearch\Entities\OpenFoodFactsSmart;
 use Modules\ProductSearch\Entities\Product;
 use OpenFoodFacts;
+use Modules\ProductSearch\Entities\Facades\OpenFoodFactsSmart;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class ProductSearchController extends Controller
@@ -18,7 +20,8 @@ class ProductSearchController extends Controller
     public function index()
     {
         echo '<pre>';
-        $collection = OpenFoodFacts::barcode('20203467');
+        dd(OpenFoodFactsSmart::findOnPage('Coca cola', 0, 10));
+        $collection = OpenFoodFactsSmart::barcode('20203467');
         print_r($collection);
         return view('productsearch::index');
     }
@@ -33,8 +36,7 @@ class ProductSearchController extends Controller
     public function invoke(Request $request, $name, int $perPage = 20)
     {
         if ($request->has('product_name')) {
-            $name = $request->query('product_name');
-            echo $name;
+            $name = $request->query('product_name')??' ';
         }
         if ($request->has('page') and $page = (int)$request->query('page') > 0) {
             // pass pager to view
@@ -42,31 +44,20 @@ class ProductSearchController extends Controller
         } else {
             $page = 1;
         }
-        print_r([$name, $page, $perPage]);
+        //print_r([$name, $page, $perPage]);
         try {
-            $collection = OpenFoodFacts::find($name)->forPage($page, $perPage);
+            $collection = OpenFoodFactsSmart::findOnPage($name, $page, $perPage);
+            // TODO add pager to collection in array ->forPage($page, $perPage)
+            //$collection['productsOnPageCollection']->forPage($page, $perPage);
         } catch (\Exception $e) {
             //abort(403, $e->getMessage());
             throw new BadRequestHttpException('OpenFoodFacts Api request failed: ' . $e->getMessage(), $e);
         }
-
-        if (!$collection->count()) {
+        // keep for future api & process empty in view
+        /*if (!$collection['productsOnPageCollection']->count()) {
             abort(418, 'There is no items');
-        }
-
-        //print_r($collection->all());
-        $products = [];
-        foreach ($collection as $item) {
-            //dd($item);
-            $products[] = new Product([
-                'external_id' => $item['_id'],
-                'product_name' => $item['product_name'] ?? 'Empty product name',
-                'categories' => $item['categories'] ?? '',
-                'image_url' => $item['image_url'] ?? null,
-            ]);
-        }
-        //dd($products);
-        //echo $collection->toJson();
+        }*/
+        $products = $collection['productsOnPageCollection']->all();
         return view('productsearch::index')
             ->with('products', $products)
             ->with('search', $name)
