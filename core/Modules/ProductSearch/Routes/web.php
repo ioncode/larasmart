@@ -14,4 +14,5 @@
 Route::prefix('productsearch')->group(function () {
     Route::get('/', 'ProductSearchController@index');
     Route::get('/invoke/{name?}', 'ProductSearchController@invoke');
+    Route::post('/store', 'ProductSearchController@store');
 });

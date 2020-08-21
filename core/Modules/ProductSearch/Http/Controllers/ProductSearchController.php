@@ -36,7 +36,7 @@ class ProductSearchController extends Controller
     public function invoke(Request $request, $name, int $perPage = 20)
     {
         if ($request->has('product_name')) {
-            $name = $request->query('product_name')??' ';
+            $name = $request->query('product_name') ?? ' ';
         }
         if ($request->has('page') and $page = (int)$request->query('page') > 0) {
             // pass pager to view
@@ -80,7 +80,26 @@ class ProductSearchController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $product = Product::where('external_id', $request->external_id)->first();
+
+        if ($product !== null) {
+            $product->update(['product_name' => $request->product_name, 'categories' => $request->categories, 'image_url' => $request->image_url]);
+            return response()->json(['success' => 'Product successfully updated!']);
+        } else {
+            $product = new Product();
+            $product->external_id = $request->external_id;
+            $product->product_name = $request->product_name;
+            $product->categories = $request->categories;
+            $product->image_url = $request->image_url;
+            try {
+                $product->save();
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Error while saving product: ' . $e->getCode()]);
+            }
+        }
+
+        return response()->json(['success' => 'Product successfully created!']);
     }
 
     /**
