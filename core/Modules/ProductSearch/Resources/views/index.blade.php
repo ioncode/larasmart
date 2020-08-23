@@ -2,14 +2,22 @@
 
 @section('content')
     {{--<h1>{{$search}}</h1>--}}
-    {{ Form::open(array('url' => 'productsearch/invoke/', 'method' => 'get')) }}
-    {{ Form::text('product_name', $search) }}
-    {{ Form::close() }}
-    @isset($products)
+    <div class="card pb-0 pt-3 card-body bg-light align-items-center">
+        {{ Form::open(array('url' => 'productsearch/invoke/', 'method' => 'get')) }}
+        {{ Form::text('product_name', $search) }}
+        {{ Form::submit('Search') }}
+        {{ Form::close() }}
+    </div>
+    @if(! $products->isEmpty())
+        <div class="row mt-3 justify-content-center">
+            {{ $products->links() }}
+        </div>
         <div class="grid-container">
+            @php
+                //dd($products->links());
+            @endphp
             @foreach ($products as $product)
                 <div class="grid-item product">
-
                     {{ Form::open(array('url' => 'productsearch/store', 'method' => 'post')) }}
                     {{ Form::hidden('product_name', $product->product_name) }}
                     {{ Form::hidden('external_id', $product->external_id) }}
@@ -21,19 +29,20 @@
                     @if($product['image_url'])
                         {{ Html::image($product['image_url'], $product->product_name, array('class' => 'css-class', 'height'=>'120px')) }}
                     @endif
-                    <p>{{ $product->product_name }}</p>
+                    <p>{!! $product->product_name !!}</p>
                     {{--<p>Image: {{ $product['image_url'] }}</p>--}}
                     @php
-                        //print_r($product);
+                        //dd($product);
                     @endphp
                 </div>
             @endforeach
         </div>
-    @endisset
-
-    @empty($products)
-        <p>There is no items</p>
-    @endempty
+        <div class="row mt-3 justify-content-center">
+            {{ $products->links() }}
+        </div>
+    @else
+        <p>There is no items, please, change your request.</p>
+    @endif
 
     {{--<p>
         This view is loaded from module: {!! config('productsearch.name') !!}
@@ -64,7 +73,13 @@
                     if (response.success) {
                         $('[type="submit"]', form).val(response.success)
                     }
+                    else if (response.error) {
+                        alert(response.error);
+                    }
                 },
+                error: function () {
+                    alert('Connection error, please, try again later');
+                }
             });
         });
 

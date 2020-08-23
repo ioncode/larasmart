@@ -15,10 +15,10 @@ class CreateProductsTable extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('image_url');
-            $table->string('product_name');
-            $table->string('categories');
-            $table->bigInteger('external_id');
+            $table->string('image_url')->nullable();
+            $table->string('product_name')->nullable();
+            $table->text('categories')->nullable();
+            $table->string('external_id')->unique();
             // disable TS in db & model by task
             //$table->timestamps();
         });
