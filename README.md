@@ -2,7 +2,7 @@
 
 ## LaraSmart 
 
-This app contains demo for use OpenFoodFacts API
+This app contains demo for use OpenFoodFacts API in Laravel 7x.
 
 - [OpenFoodFacts Wiki](https://wiki.openfoodfacts.org/API).
 - [Food data](https://world.openfoodfacts.org/data).
