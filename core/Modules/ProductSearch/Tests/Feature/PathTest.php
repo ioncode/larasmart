@@ -19,6 +19,9 @@ class PathTest extends TestCase
         $response->assertStatus(200);
     }
 
+    /**
+     * This test is not about OpenFoodFacts Api (see corresponding Unit test below), this is about path, route & response code
+     */
     public function testMars()
     {
         $response = $this->get('/productsearch/invoke?product_name=mars&page=2');

@@ -13,6 +13,7 @@ class ProductSearchController extends Controller
 {
     /**
      * Display a listing of the resource.
+     * This is just debug test of Api Call
      * @return Renderable
      */
     public function index()
@@ -31,13 +32,12 @@ class ProductSearchController extends Controller
      * @param int $perPage
      * @return Renderable
      */
-    public function invoke(Request $request, $name = ' ', int $perPage = 20)
+    public function invoke(Request $request, string $name = ' ', int $perPage = 20)
     {
         if ($request->has('product_name')) {
             $name = $request->query('product_name') ?? ' ';
         }
-        if ($request->has('page') and (int)$request->query('page') > 0 ) {
-            // pass pager to view
+        if ((int)$request->query('page') > 0) {
             $page = (int)$request->query('page');
         } else {
             $page = 1;
@@ -60,6 +60,11 @@ class ProductSearchController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'external_id' => 'bail|required|max:255',
+            'image_url' => 'max:255',
+            'product_name' => 'max:255',
+        ]);
         $product = Product::where('external_id', $request->external_id)->first();
         if ($product !== null) {
             try {

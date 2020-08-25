@@ -20,6 +20,12 @@ class OpenFoodFactsSmartTest extends TestCase
      */
     public function testFindOnPage($fullPageLength = 20)
     {
-        $this->assertTrue(OpenFoodFactsSmart::findOnPage('Cola', 1, $fullPageLength)->count() === $fullPageLength);
+        $page = OpenFoodFactsSmart::findOnPage('Cola', 1, $fullPageLength);
+        $this->assertTrue($page->count() === $fullPageLength);
+        foreach ($page as $product) {
+            $this->assertInstanceOf('Modules\ProductSearch\Entities\Product', $product, 'Method must return items of type Product');
+            $this->assertArrayHasKey('external_id', (array)$product->getAttributes(), 'There is no needed external_id attribute to store id of OpenFoodFacts Api');
+            $this->assertNotEmpty($product->external_id, 'external_id can not be blank');
+        }
     }
 }
